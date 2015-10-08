@@ -5,7 +5,7 @@
 #specifies that the job will execute all the analysis within a rule group serially
 #
 CREATE TABLE job (
-  job_id             int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  job_id             int(10) unsigned NOT NULL auto_increment,
   process_id         varchar(100) DEFAULT 'NEW' NOT NULL,
   analysis_id        int(10) unsigned DEFAULT '0',
   rule_group_id      int(10) unsigned DEFAULT '0',
@@ -41,7 +41,7 @@ CREATE TABLE dynamic_argument(
 #input_create_argument - holds the arguments necessary for input creates
 
 CREATE TABLE input_create_argument (
-  input_create_argument_id    int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  input_create_argument_id    int(10) unsigned NOT NULL auto_increment,
   input_create_id    int(10) unsigned DEFAULT '0' NOT NULL ,
   tag             varchar(40) DEFAULT '',
   value           varchar(255) DEFAULT '',
@@ -52,7 +52,7 @@ CREATE TABLE input_create_argument (
 #input_creates - input creates are specialized runnables used for generating inputs and job automatiaclly 
 
 CREATE TABLE input_create (
-  input_create_id  int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  input_create_id  int(10) unsigned NOT NULL auto_increment,
   data_monger_id int(10) unsigned DEFAULT '0' NOT NULL ,
   module varchar(40) DEFAULT '' NOT NULL,
   rank            int(10) DEFAULT 1 NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE input_create (
 #adaptor_id is the foreign key to the stream_adaptor or dbadpator tables
 
 CREATE TABLE iohandler (
-   iohandler_id         int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+   iohandler_id         int(10) unsigned NOT NULL auto_increment,
    adaptor_id           int(10) DEFAULT '0' ,
    type                 enum ('INPUT','OUTPUT') NOT NULL,
    adaptor_type         enum('DB','STREAM','CHAIN') DEFAULT 'DB' NOT NULL, 
@@ -102,11 +102,11 @@ CREATE TABLE argument (
 #dbadaptor - holds the database connection information
 
 CREATE TABLE dbadaptor (
-   dbadaptor_id   int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+   dbadaptor_id   int(10) unsigned NOT NULL auto_increment,
    dbname         varchar(40) DEFAULT '' NOT NULL,
    driver         varchar (40) DEFAULT '' NOT NULL,
    host           varchar (40) DEFAULT '',
-   port           int(10) unsigned  DEFAULT '',
+   port           int(10) unsigned  DEFAULT NULL,
    user           varchar (40) DEFAULT '',
    pass           varchar (40) DEFAULT '',
    module         varchar (100) DEFAULT '',
@@ -116,7 +116,7 @@ CREATE TABLE dbadaptor (
 
 #streamadaptor - holds the module name of stream adaptors
 CREATE TABLE streamadaptor (
-  streamadaptor_id  int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  streamadaptor_id  int(10) unsigned NOT NULL auto_increment,
   module          varchar(40) DEFAULT '' NOT NULL,
   file_path        mediumtext DEFAULT '',
   file_suffix     varchar(40) DEFAULT '',
@@ -130,7 +130,7 @@ CREATE TABLE streamadaptor (
 #job_id is the foreign key to the job table
 
 CREATE TABLE input (
-   input_id         int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+   input_id         int(10) unsigned NOT NULL auto_increment,
    name             varchar(255) DEFAULT '' NOT NULL,
    tag              varchar(40) DEFAULT '',
    job_id           int(10) unsigned NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE output (
 # outputs as inputs only for the next analysis  
 #DEPRECATRED??
 CREATE TABLE new_input (
-  input_id         int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  input_id         int(10) unsigned NOT NULL auto_increment,
   job_id           int(10) unsigned DEFAULT '0' NOT NULL,
   name             varchar(40) DEFAULT '' NOT NULL,
   PRIMARY KEY (input_id)
@@ -173,9 +173,9 @@ CREATE TABLE new_input (
 # COPY_ID_FILE  - copys the input id from the previous job to the next and adding the tag infile 
 
 CREATE TABLE rule (
-  rule_id          int(10) unsigned DEFAULT'0' NOT NULL auto_increment,
+  rule_id          int(10) unsigned NOT NULL auto_increment,
   rule_group_id    int(10) unsigned DEFAULT '0',
-  current          int(10) unsigned DEFAULT '',
+  current          int(10) unsigned DEFAULT NULL,
   next             int(10) unsigned NOT NULL,
   action           enum('WAITFORALL','WAITFORALL_AND_UPDATE','UPDATE','NOTHING','COPY_INPUT','COPY_ID','CREATE_INPUT','COPY_ID_FILE','CHAIN'),
   
@@ -184,7 +184,7 @@ CREATE TABLE rule (
 
 #analysis - This contains the analysis configuration.
 CREATE TABLE analysis (
-  analysis_id      int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  analysis_id      int(10) unsigned NOT NULL auto_increment,
   created          datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
   logic_name       varchar(40) not null,
   runnable         varchar(80),
@@ -194,7 +194,7 @@ CREATE TABLE analysis (
   program          varchar(80),
   program_version  varchar(40),
   program_file     varchar(80),
-  data_monger_id   int(10) unsigned DEFAULT '',
+  data_monger_id   int(10) unsigned DEFAULT NULL,
   runnable_parameters varchar(255),
   analysis_parameters       mediumtext,
   gff_source       varchar(40),
@@ -208,7 +208,7 @@ CREATE TABLE analysis (
 #analysis_iohandler - This is used to link analysis with iohandlers. Each analysis may have more than one iohandler
 #and for each iohandler there may be more than one transformer.
 
-CREATE TABLE analysis_iohandler(
+CREATE TABLE analysis_iohandler (
   analysis_id               int(10) NOT NULL,
   iohandler_id              int(10) NOT NULL,
   transformer_id            int(10) ,
@@ -224,7 +224,7 @@ CREATE TABLE analysis_iohandler(
 #	2) After outputs are generated and before they are stored in the database
  
 CREATE TABLE transformer(
-	transformer_id		int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+	transformer_id		int(10) unsigned NOT NULL auto_increment,
   	module			varchar(255)	 NOT NULL,
   	PRIMARY KEY (transformer_id)
 );
@@ -234,7 +234,7 @@ CREATE TABLE transformer(
 #transformer_id is the foreign key to the transformer table
 
 CREATE TABLE transformer_method(
-	transformer_method_id	INT(10) UNSIGNED DEFAULT '0' NOT NULL AUTO_INCREMENT,
+	transformer_method_id	INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	transformer_id 		INT(10) UNSIGNED NOT NULL,
 	name			VARCHAR(40) NOT NULL,
 	rank			INT(2) ,
@@ -248,7 +248,7 @@ CREATE TABLE transformer_method(
 # transformer_method_id is the foreign key to the transformer_method table
 
 CREATE TABLE transformer_argument(
-	transformer_argument_id 	int(10) unsigned DEFAULT '0' NOT NULL AUTO_INCREMENT,
+	transformer_argument_id 	int(10) unsigned NOT NULL AUTO_INCREMENT,
 	transformer_method_id 	INT(10) UNSIGNED NOT NULL,
 	tag 			VARCHAR(40),
 	value 			VARCHAR(40) NOT NULL,
@@ -260,7 +260,7 @@ CREATE TABLE transformer_argument(
 #completed_jobs - holds the list of jobs that have been completed and removed from the job table.
 
 CREATE TABLE completed_jobs (
-  completed_job_id      int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  completed_job_id      int(10) unsigned NOT NULL auto_increment,
   process_id            varchar(100) DEFAULT 'NEW' NOT NULL,
   analysis_id           int(10) unsigned DEFAULT '0',
   rule_group_id         int(10) unsigned DEFAULT '0',
@@ -280,7 +280,7 @@ CREATE TABLE completed_jobs (
 #belong to a particular group
 
 CREATE TABLE node (
-  node_id               int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  node_id               int(10) unsigned NOT NULL auto_increment,
   node_name             varchar(40) DEFAULT '' NOT NULL,
   group_id              int(10) unsigned DEFAULT '0' NOT NULL,
 
@@ -303,7 +303,7 @@ CREATE TABLE node_group (
 #fetch_seq and fetch_repeatmasked_seq
 
 CREATE TABLE iohandler_map(
- prev_iohandler_id             int(10) DEFAULT '',
+ prev_iohandler_id             int(10) DEFAULT NULL,
  analysis_id                   int(10) NOT NULL,
  map_iohandler_id              int(10) NOT NULL,
 
