@@ -290,7 +290,7 @@ sub run{
     while ($run) {
         
         eval "require Bio::Pipeline::PipeConf";
-        my $new_queue = %Bio::Pipeline::PipeConf::PipeConf->{'QUEUE'};
+        my $new_queue = $Bio::Pipeline::PipeConf::PipeConf->{'QUEUE'};
         $self->queue($new_queue);
         my $batchsubmitter = Bio::Pipeline::BatchSubmission->new( -dbobj=>$self->db,-queue=>$self->queue);
         $self->batch_submission_obj($batchsubmitter);
