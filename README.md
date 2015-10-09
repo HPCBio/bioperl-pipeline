@@ -55,6 +55,7 @@ Each job is then run  sequentially but this is not recommended for high throughp
   - bioperl-live 
   - bioperl-run  
   - bioperl-pipeline - Git only at the moment
+  - Bio-Coordinate - Git only at the moment
   - **Recommended but not required**: bioperl-db and biosql-schema
 
 ### Installation
